@@ -12,6 +12,7 @@
 #import "ZSSBarButtonItem.h"
 #import "HRColorUtil.h"
 #import "ZSSTextView.h"
+#import "UIResponder+ZSSFirstResponder.h"
 
 @import JavaScriptCore;
 
@@ -1936,9 +1937,12 @@ static CGFloat kDefaultScale = 0.5;
     
     const int extraHeight = 10;
     
-    if ([notification.name isEqualToString:UIKeyboardWillShowNotification]) {
+    BOOL isInFirstResponderChain = [UIResponder zss_isInResponderChain:self.view];
+    if (isInFirstResponderChain && [notification.name isEqualToString:UIKeyboardWillShowNotification]) {
         
         [UIView animateWithDuration:duration delay:0 options:animationOptions animations:^{
+            
+            self.toolbarHolder.alpha = 1.0f;
             
             // Toolbar
             CGRect frame = self.toolbarHolder.frame;
@@ -1967,6 +1971,8 @@ static CGFloat kDefaultScale = 0.5;
     } else {
         
         [UIView animateWithDuration:duration delay:0 options:animationOptions animations:^{
+            
+            self.toolbarHolder.alpha = isInFirstResponderChain ? 1.0f : 0.0f;
             
             CGRect frame = self.toolbarHolder.frame;
             
